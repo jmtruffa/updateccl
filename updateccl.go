@@ -65,7 +65,7 @@ func downloadCCL() {
 	defer db.Close()
 
 	var lastDate sql.NullTime
-	err = db.QueryRow("SELECT MAX(date) FROM ccl3").Scan(&lastDate)
+	err = db.QueryRow("SELECT MAX(date) FROM ccl").Scan(&lastDate)
 	if err != nil {
 		log.Fatalf("Failed to query last date: %v", err)
 	}
@@ -152,14 +152,14 @@ func downloadCCL() {
 		log.Fatalf("Failed to begin transaction: %v", err)
 	}
 
-	stmt, err := tx.Prepare("INSERT INTO ccl3 (date, ccl, ccl3) VALUES ($1, $2, $3)")
+	stmt, err := tx.Prepare("INSERT INTO ccl (date, ccl, ccl3) VALUES ($1, $2, $3)")
 	if err != nil {
 		log.Fatalf("Failed to prepare statement: %v", err)
 	}
 	defer stmt.Close()
 
 	for _, row := range insertData {
-		_, err := stmt.Exec(row.Date, row.CCL, row.CCL3)
+		_, err := stmt.Exec(row.Date, row.CCL, row.CCL)
 		if err != nil {
 			tx.Rollback()
 			log.Fatalf("Failed to insert row: %v", err)
